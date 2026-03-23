@@ -1,4 +1,4 @@
-package com.sumukh.api_gateway;
+package com.sumukh.apigateway;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

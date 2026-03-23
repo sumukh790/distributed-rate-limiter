@@ -1,4 +1,4 @@
-package com.sumukh.rate_limiter_service;
+package com.sumukh.rate.llimiter.service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
