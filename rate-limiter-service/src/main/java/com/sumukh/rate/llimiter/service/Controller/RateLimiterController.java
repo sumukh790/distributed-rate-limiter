@@ -1,6 +1,6 @@
 package com.sumukh.rate.llimiter.service.Controller;
 
-import com.sumukh.rate.llimiter.service.service.RedisRateLimitService;
+import com.sumukh.rate.llimiter.service.service.TokenBucketService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/limit")
 public class RateLimiterController {
 
-    private final RedisRateLimitService service;
+    private final TokenBucketService service;
 
-    public RateLimiterController(RedisRateLimitService service) {
+    public RateLimiterController(TokenBucketService service) {
         this.service = service;
     }
 
