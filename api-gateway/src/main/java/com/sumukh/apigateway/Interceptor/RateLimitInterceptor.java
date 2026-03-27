@@ -3,16 +3,16 @@ package com.sumukh.apigateway.Interceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
 public class RateLimitInterceptor implements HandlerInterceptor {
 
-    private final RestTemplate template;
+    private final WebClient webclient;
 
-    RateLimitInterceptor(RestTemplate template) {
-        this.template = template;
+    RateLimitInterceptor(WebClient webclient) {
+        this.webclient = webclient;
     }
 
     @Override
@@ -24,9 +24,8 @@ public class RateLimitInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        String url = "http://localhost:8081/limit/check?clientId=" + clientId;
-
-        Boolean isAllowed = template.getForObject(url, Boolean.class);
+        Boolean isAllowed = webclient.get().uri("/limit/check?clientId=" + clientId)
+                .retrieve().bodyToMono(Boolean.class).block();
 
         if (Boolean.TRUE.equals(isAllowed)) {
             return true;
