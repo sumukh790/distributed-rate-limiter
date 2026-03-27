@@ -1,4 +1,4 @@
-package com.sumukh.analytics_service.consumer;
+package com.sumukh.analytics_service.Event.consumer;
 
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 public class EventConsumer {
 
     @KafkaListener(topics = "rate-limit-events", groupId = "analytics-group")
-    public void consume (Object requestEvent) {
-        System.out.println("Analytics received: " + requestEvent);
+    public void consume(RequestEvent event) {
+        System.out.println("EVENT: " + event);
     }
 }
