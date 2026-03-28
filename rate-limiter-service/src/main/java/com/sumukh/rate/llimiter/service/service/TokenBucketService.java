@@ -1,5 +1,6 @@
 package com.sumukh.rate.llimiter.service.service;
 
+import com.sumukh.rate.llimiter.service.config.PropConfigs;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -12,9 +13,11 @@ public class TokenBucketService {
 
     private final StringRedisTemplate redis;
     private final DefaultRedisScript<Long> script;
+    private final PropConfigs configs;
 
-    TokenBucketService(StringRedisTemplate redis) {
+    TokenBucketService(StringRedisTemplate redis, PropConfigs configs) {
         this.redis = redis;
+        this.configs = configs;
 
         this.script = new DefaultRedisScript<>();
         this.script.setLocation(new ClassPathResource("token_bucket.lua"));
@@ -27,8 +30,8 @@ public class TokenBucketService {
 
         Long result = redis.execute(script,
                 List.of(tokenKey, tsKey),
-                "5",
-                "5",
+                configs.getCapacity(),
+                configs.getRefillRate(),
                 String.valueOf(System.currentTimeMillis()));
 
         return result != null && result == 1;
