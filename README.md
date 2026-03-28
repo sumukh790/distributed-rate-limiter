@@ -1,24 +1,27 @@
-# Distributed Rate Limiter (Kafka + Redis + Spring Boot)
+# 🚀 Distributed Rate Limiter (Kafka + Redis + Spring Boot)
 
 A production-grade **distributed rate limiting system** built using **Spring Boot, Kafka, Redis, and WebFlux**.  
-This project demonstrates event-driven architecture, idempotent processing, retries, and fault tolerance.
+This project demonstrates event-driven architecture, idempotent processing, retries, DLQ handling, and service resilience.
 
 ---
 
-## Architecture distributed-rate-limiter
+## 🧱 Architecture
+
+```
 Client Request
-↓
+      ↓
 API Gateway (WebFlux Filter)
-↓
+      ↓
 Rate Limiter Service (Redis + Lua)
-↓
+      ↓
 Kafka Producer
-↓
+      ↓
 Kafka Topic (rate-limit-events)
-↓
+      ↓
 Analytics Service (Consumer)
-↓
+      ↓
 Retry → DLQ (rate-limit-events-dlq)
+```
 
 ---
 
@@ -28,7 +31,7 @@ Retry → DLQ (rate-limit-events-dlq)
 - Spring Boot 3 (WebFlux + MVC)
 - Apache Kafka
 - Redis
-- Docker
+- Docker + Docker Compose
 - k6 (Load Testing)
 
 ---
@@ -40,6 +43,7 @@ Retry → DLQ (rate-limit-events-dlq)
 - Uses a **WebFilter** for request interception
 - Calls rate limiter service via **WebClient**
 - Publishes events to Kafka
+- Includes **Circuit Breaker (Resilience4j)**
 
 ---
 
@@ -89,66 +93,80 @@ Retry → DLQ (rate-limit-events-dlq)
 
 ---
 
+### Circuit Breaker
+- Prevents cascading failures
+- Fallback mechanism when rate limiter is down
+
+---
+
 ### Reactive Gateway
 - Non-blocking request handling
 - Backpressure-friendly
 
 ---
 
-## 🐳 Running Locally
+## 🐳 Running Locally (Recommended)
 
-### Start Zookeeper
-docker run -d
-–name zookeeper
--p 2181:2181
-confluentinc/cp-zookeeper:7.5.0
+### 1. Start Infrastructure
 
----
+```bash
+docker compose up -d
+```
 
-### Start Kafka
-docker run -d
-–name kafka
--p 9092:9092
-–link zookeeper
--e KAFKA_BROKER_ID=1
--e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
--e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
--e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
-confluentinc/cp-kafka:7.5.0
+This starts:
+- Kafka
+- Zookeeper
+- Redis
 
 ---
 
-### Create Topics
-docker exec -it kafka kafka-topics
-–bootstrap-server localhost:9092
-–create
-–topic rate-limit-events
-–partitions 1
-–replication-factor 1
+### 2. Verify Containers
 
-docker exec -it kafka kafka-topics
-–bootstrap-server localhost:9092
-–create
-–topic rate-limit-events-dlq
-–partitions 1
-–replication-factor 1
+```bash
+docker ps
+```
 
 ---
 
-### Start Redis
-docker run -d -p 6379:6379 redis
+### 3. Create Kafka Topics
+
+```bash
+docker exec -it kafka kafka-topics \
+--bootstrap-server localhost:9092 \
+--create \
+--topic rate-limit-events \
+--partitions 1 \
+--replication-factor 1
+```
+
+```bash
+docker exec -it kafka kafka-topics \
+--bootstrap-server localhost:9092 \
+--create \
+--topic rate-limit-events-dlq \
+--partitions 1 \
+--replication-factor 1
+```
 
 ---
 
-### Run Services
-./mvnw spring-boot:run
+### 4. Run Services
 
-(Start each service separately)
+Run each service separately:
+
+```bash
+cd api-gateway && ./mvnw spring-boot:run
+cd rate-limiter-service && ./mvnw spring-boot:run
+cd analytics-service && ./mvnw spring-boot:run
+```
 
 ---
 
 ## 🧪 Load Testing
+
+```bash
 k6 run loadtest.js
+```
 
 ---
 
@@ -165,7 +183,7 @@ k6 run loadtest.js
 ## 🚀 Future Improvements
 
 - Retry topics (non-blocking retries)
-- Circuit breaker (Resilience4j)
+- Circuit breaker enhancements
 - Observability (Prometheus + Grafana)
 - Kafka Streams for analytics
 - Outbox pattern
@@ -179,3 +197,4 @@ Sumukh
 ---
 
 ## ⭐ If you found this useful
+
