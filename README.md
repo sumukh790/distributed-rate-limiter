@@ -148,6 +148,24 @@ docker exec -it kafka kafka-topics \
 --replication-factor 1
 ```
 
+```bash
+docker exec -it kafka kafka-topics \
+--bootstrap-server localhost:9092 \
+--create \
+--topic rate-limit-events-retry-1 \
+--partitions 1 \
+--replication-factor 1
+```
+
+```bash
+docker exec -it kafka kafka-topics \
+--bootstrap-server localhost:9092 \
+--create \
+--topic rate-limit-events-retry-2 \
+--partitions 1 \
+--replication-factor 1
+```
+
 ---
 
 ### 4. Run Services
@@ -183,11 +201,10 @@ k6 run loadtest.js
 ## 🚀 Future Improvements
 
 - Retry topics (non-blocking retries)
-- Circuit breaker enhancements
 - Observability (Prometheus + Grafana)
 - Kafka Streams for analytics
 - Outbox pattern
-
+- 
 ---
 
 ## 👨‍💻 Author
