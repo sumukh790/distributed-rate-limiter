@@ -14,6 +14,6 @@ public class EventProducer {
     }
 
     public void sendEvent(RequestEvent requestEvent) {
-        template.send("rate-limit-events", requestEvent);
+        template.send("rate-limit-events", requestEvent.getClientId(), requestEvent);
     }
 }
