@@ -44,7 +44,8 @@ public class RateLimitFilter implements WebFilter {
                     Mono.fromRunnable(() -> producer.sendEvent(new RequestEvent(
                             clientId,
                             System.currentTimeMillis(),
-                            isAllowed
+                            isAllowed,
+                            clientId + System.currentTimeMillis()
                     ))).subscribe();
 
                     if (Boolean.TRUE.equals(isAllowed)) {

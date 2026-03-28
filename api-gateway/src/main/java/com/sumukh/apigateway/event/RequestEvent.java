@@ -5,15 +5,17 @@ public class RequestEvent {
     private String clientId;
     private long timeStamp;
     private boolean isAllowed;
+    private String eventId;
 
     public RequestEvent() {
 
     }
 
-    public RequestEvent(String clientId, long timeStamp, boolean isAllowed) {
+    public RequestEvent(String clientId, long timeStamp, boolean isAllowed, String eventId) {
         this.clientId = clientId;
         this.timeStamp = timeStamp;
         this.isAllowed = isAllowed;
+        this.eventId = eventId;
     }
 
     public String getClientId() {
@@ -38,5 +40,13 @@ public class RequestEvent {
 
     public void setAllowed(boolean allowed) {
         isAllowed = allowed;
+    }
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
     }
 }
