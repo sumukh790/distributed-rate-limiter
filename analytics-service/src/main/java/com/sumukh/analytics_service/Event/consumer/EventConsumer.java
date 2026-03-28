@@ -1,5 +1,7 @@
 package com.sumukh.analytics_service.Event.consumer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -11,6 +13,7 @@ import java.time.Duration;
 @Component
 public class EventConsumer {
 
+    private final static Logger logger = LoggerFactory.getLogger(EventConsumer.class);
     private final StringRedisTemplate redis;
     private final KafkaTemplate<Object, Object> template;
 
@@ -25,6 +28,7 @@ public class EventConsumer {
             process(event);
             ack.acknowledge();
         } catch (Exception ex) {
+            logger.warn("Failed processing the event: {}, sending to retry-events-1", event);
             template.send("rate-limit-events-retry-1", event);
             ack.acknowledge();
         }
@@ -35,6 +39,7 @@ public class EventConsumer {
         try {
             process(event);
         } catch (Exception ex) {
+            logger.warn("Failed processing the event: {}, sending to retry-events-2", event);
             template.send("rate-limit-events-retry-2", event);
         }
     }
@@ -44,6 +49,7 @@ public class EventConsumer {
         try {
             process(event);
         } catch (Exception ex) {
+            logger.warn("Failed processing the event: {}, sending to DLQ", event);
             template.send("rate-limit-events-dlq", event);
         }
     }
@@ -57,6 +63,6 @@ public class EventConsumer {
             return;
         }
 
-        System.out.println("PROCESSING: " + event);
+        logger.info("Processing the event {}", event); // Do business logic.
     }
 }

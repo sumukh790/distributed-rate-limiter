@@ -3,6 +3,8 @@ package com.sumukh.apigateway.filter;
 import com.sumukh.apigateway.event.RequestEvent;
 import com.sumukh.apigateway.event.producer.EventProducer;
 import com.sumukh.apigateway.service.RateLimitClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -13,6 +15,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class RateLimitFilter implements WebFilter {
 
+    private static final Logger logger = LoggerFactory.getLogger(RateLimitFilter.class);
     private final RateLimitClient client;
     private final EventProducer producer;
 
@@ -39,6 +42,7 @@ public class RateLimitFilter implements WebFilter {
         return client.checkLimit(clientId)
                 .flatMap(isAllowed -> {
 
+                    logger.info("Sending request event for the clientId: {}", clientId);
                     producer.sendEvent(new RequestEvent(
                             clientId,
                             System.currentTimeMillis(),

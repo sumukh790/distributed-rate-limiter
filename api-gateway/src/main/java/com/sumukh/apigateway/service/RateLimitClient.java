@@ -1,13 +1,18 @@
 package com.sumukh.apigateway.service;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;import java.time.Duration;
+import reactor.core.publisher.Mono;
+
+import java.time.Duration;
 
 @Service
 public class RateLimitClient {
 
+    private static final Logger logger = LoggerFactory.getLogger(RateLimitClient.class);
     private final WebClient webClient;
 
     public RateLimitClient(WebClient webClient) {
@@ -25,8 +30,7 @@ public class RateLimitClient {
     }
 
     private Mono<Boolean> fallback(String clientId, Throwable ex) {
-        System.out.println("Circuit breaker fallback triggered: " + ex.getMessage());
-        return Mono.just(true);
+        logger.info("Circuit breaker fallback triggered for the client: {} due to : {}", clientId, ex.getMessage());
+        return Mono.just(false);
     }
-
 }
