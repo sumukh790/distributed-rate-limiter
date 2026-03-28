@@ -5,6 +5,15 @@ public class RequestEvent {
     private String clientId;
     private boolean allowed;
     private long timestamp;
+    private String eventId;
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
 
     public String getClientId() {
         return clientId;
