@@ -22,11 +22,9 @@ public class EventConsumer {
             concurrency = "3"
     )
     public void consume(RequestEvent event, Acknowledgment ack) {
-
         String key = "event:" + event.getEventId();
 
         try {
-
             Boolean isNew = redis.opsForValue()
                     .setIfAbsent(key, event.getClientId(), Duration.ofHours(1));
 
