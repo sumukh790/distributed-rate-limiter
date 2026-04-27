@@ -11,6 +11,6 @@ public class GatewayController {
 
     @GetMapping("/test")
     public String getClient(@RequestHeader("X-CLIENT-ID") String clientId) {
-        return "Do business logic only..";
+        return "Invoke service layer to do business logic.";
     }
 }
