@@ -1,5 +1,7 @@
 package com.sumukh.analytics_service.Event.consumer;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -16,10 +18,12 @@ public class EventConsumer {
     private final static Logger logger = LoggerFactory.getLogger(EventConsumer.class);
     private final StringRedisTemplate redis;
     private final KafkaTemplate<Object, Object> template;
+    private final MeterRegistry registry;
 
-    public EventConsumer(StringRedisTemplate redis, KafkaTemplate<Object, Object> template) {
+    public EventConsumer(StringRedisTemplate redis, KafkaTemplate<Object, Object> template, MeterRegistry registry) {
         this.redis = redis;
         this.template = template;
+        this.registry = registry;
     }
 
     @KafkaListener(topics = "rate-limit-events", groupId = "analytics-group", concurrency = "3")
@@ -62,6 +66,11 @@ public class EventConsumer {
         if (Boolean.FALSE.equals(isNew)) {
             return;
         }
+
+        Counter.builder("rate_limiter_requests")
+                .tag("status", event.isAllowed() ? "ALLOWED" : "BLOCKED")
+                .register(registry)
+                .increment();
 
         logger.info("Processing the event {}", event); // Do business logic.
     }

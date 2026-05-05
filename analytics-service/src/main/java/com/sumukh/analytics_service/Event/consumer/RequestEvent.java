@@ -3,7 +3,7 @@ package com.sumukh.analytics_service.Event.consumer;
 public class RequestEvent {
 
     private String clientId;
-    private boolean allowed;
+    private boolean isAllowed;
     private long timestamp;
     private String eventId;
 
@@ -24,11 +24,11 @@ public class RequestEvent {
     }
 
     public boolean isAllowed() {
-        return allowed;
+        return isAllowed;
     }
 
-    public void setAllowed(boolean allowed) {
-        this.allowed = allowed;
+    public void setAllowed(boolean isAllowed) {
+        this.isAllowed = isAllowed;
     }
 
     public long getTimestamp() {
